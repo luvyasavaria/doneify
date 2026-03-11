@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doneify</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#3b82f6;--blue-d:#1d4ed8;--purple:#a78bfa;
+  --green:#34d399;--bg:#080d16;
+  --card:rgba(13,20,38,0.92);--border:rgba(255,255,255,0.07);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:#f1f5f9;min-height:100vh;overflow-x:hidden}
+
+/* grid bg */
+.gbg{
+  background-color:var(--bg);
+  background-image:linear-gradient(rgba(59,130,246,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,130,246,0.04) 1px,transparent 1px);
+  background-size:48px 48px;
+  position:relative;
+}
+
+/* orbs */
+.orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(90px)}
+.orb-t{width:700px;height:500px;background:rgba(37,99,235,0.17);top:-200px;left:50%;transform:translateX(-50%)}
+.orb-c{width:300px;height:300px;background:rgba(30,58,138,0.26);bottom:5%;right:0}
+
+/* animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIt{0%{transform:scale(1)}45%{transform:scale(1.15)}100%{transform:scale(1)}}
+.fu{animation:fadeUp .65s cubic-bezier(.16,1,.3,1) both}
+.d1{animation-delay:.08s}.d2{animation-delay:.18s}.d3{animation-delay:.30s}
+.d4{animation-delay:.44s}.d5{animation-delay:.58s}
+.pi{animation:fadeIn .3s ease both}
+
+/* glass */
+.glass{background:rgba(15,23,42,0.78);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:24px}
+.glass-light{background:rgba(30,41,59,0.5);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:999px}
+
+/* btn-primary */
+.bp{
+  background:linear-gradient(135deg,var(--blue-d),var(--blue));
+  border:1px solid rgba(96,165,250,0.35);
+  box-shadow:0 0 36px rgba(59,130,246,0.38),0 4px 16px rgba(0,0,0,0.4);
+  color:#fff;font-family:'Syne',sans-serif;font-weight:800;
+  letter-spacing:.06em;cursor:pointer;
+  transition:transform .22s ease,box-shadow .22s ease;
+  border-radius:16px;text-transform:uppercase;
+}
+.bp:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 56px rgba(59,130,246,0.55),0 8px 28px rgba(0,0,0,0.5)}
+.bp:active{transform:scale(0.97)}
+
+/* btn-ghost */
+.bg{background:transparent;border:1px solid rgba(255,255,255,0.13);color:#94a3b8;cursor:pointer;border-radius:999px;transition:all .2s;font-weight:700;font-family:inherit}
+.bg:hover{background:rgba(255,255,255,0.07);color:#f1f5f9;border-color:rgba(255,255,255,0.22)}
+
+/* ── LANDING NAV ── */
+.lnav{
+  position:sticky;top:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 40px;max-width:1100px;margin:0 auto;
+  backdrop-filter:blur(14px);
+}
+.logo{display:flex;align-items:center;gap:12px;background:none;border:none;cursor:pointer}
+.logo-ico{
+  width:38px;height:38px;border-radius:12px;
+  background:linear-gradient(135deg,var(--blue-d),#60a5fa);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:900;font-size:18px;
+  color:#fff;box-shadow:0 6px 20px rgba(29,78,216,0.55);flex-shrink:0;
+}
+.logo-txt{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.02em;color:#f1f5f9}
+.lnav-links{display:flex;align-items:center;gap:6px}
+.nl{background:none;border:none;color:#64748b;font-size:14px;font-weight:700;cursor:pointer;padding:8px 16px;border-radius:999px;transition:all .2s;font-family:inherit}
+.nl:hover{color:#f1f5f9;background:rgba(255,255,255,0.06)}
+
+/* ── HERO ── */
+.hero{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;text-align:center;padding:56px 24px 100px;min-height:100vh}
+.badge{display:inline-block;background:rgba(59,130,246,0.13);border:1px solid rgba(59,130,246,0.28);color:#93c5fd;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.18em;padding:8px 18px;border-radius:999px;margin-bottom:32px}
+.htitle{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2.8rem,8vw,6.5rem);line-height:1.05;letter-spacing:-.03em;color:#f1f5f9;margin-bottom:24px}
+.grad{background:linear-gradient(90deg,#60a5fa,var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hsub{color:#64748b;font-size:17px;line-height:1.7;max-width:480px;margin-bottom:44px}
+.hcta{padding:20px 48px;font-size:17px;border-radius:18px}
+.pills{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:56px}
+.pill{padding:8px 18px;font-size:12px;font-weight:600;color:#94a3b8}
+.pcard{margin-top:64px;width:100%;max-width:360px;text-align:left;padding:24px;box-shadow:0 28px 70px rgba(8,13,22,0.7)}
+.pcard-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.pcard-t{font-weight:700;font-size:14px}
+.pcard-f{font-size:11px;color:#475569;font-weight:600;margin-top:10px}
+
+/* ── SECTIONS ── */
+.sec{position:relative;z-index:10;padding:100px 40px;max-width:1100px;margin:0 auto}
+.sdiv{border-top:1px solid rgba(255,255,255,0.05)}
+.slabel{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.22em;color:var(--blue);margin-bottom:16px}
+.stitle{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,5vw,3.5rem);line-height:1.08;letter-spacing:-.03em;margin-bottom:20px}
+.ssub{color:#64748b;font-size:16px;line-height:1.75;max-width:520px}
+
+/* why grid */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:64px}
+.wcard{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:32px 28px;transition:transform .22s,border-color .22s,box-shadow .22s}
+.wcard:hover{transform:translateY(-4px);border-color:rgba(59,130,246,0.25);box-shadow:0 16px 48px rgba(0,0,0,0.35)}
+.wicon{font-size:36px;margin-bottom:20px;display:block}
+.wtitle{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:10px}
+.wbody{color:#475569;font-size:14px;line-height:1.72}
+
+/* about */
+.about-in{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.dav-img{width:130px;height:130px;border-radius:50%;object-fit:cover;border:3px solid var(--blue);box-shadow:0 0 40px rgba(59,130,246,0.35);margin-bottom:16px}
+.idea-pill{display:inline-block;background:rgba(255,255,255,0.08);padding:6px 14px;border-radius:999px;font-size:11px;font-weight:800;color:#cbd5e1;border:1px solid rgba(255,255,255,0.1)}
+.dname{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;letter-spacing:-.02em;margin-bottom:6px}
+.drole{color:var(--blue);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px}
+.dbio{color:#64748b;font-size:15px;line-height:1.78;margin-bottom:28px}
+.feedback-btn{display:inline-flex;align-items:center;text-decoration:none;padding:14px 24px;font-size:14px;border-radius:14px}
+.acol{display:flex;flex-direction:column;gap:16px}
+.ascard{background:var(--card);border:1px solid var(--border);border-radius:20px;display:flex;align-items:center;gap:20px;transition:transform .2s,border-color .2s}
+.ascard:hover{transform:translateY(-3px);border-color:rgba(59,130,246,0.25)}
+.stat-big{padding:36px 32px;flex:2}
+.stat-big .asval{font-size:1.8rem}
+.stat-small{padding:18px 32px;flex:1;opacity:0.85}
+.stat-small .asval{font-size:1.2rem}
+.asico{font-size:28px;flex-shrink:0}
+.asval{font-family:'Syne',sans-serif;font-weight:800;color:#f1f5f9}
+.aslbl{font-size:12px;color:#475569;font-weight:600;margin-top:2px}
+
+/* footer */
+.foot{padding:36px 40px;display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;font-size:13px;color:#334155;font-weight:600}
+
+/* progress */
+.pt{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.04);border-radius:999px;overflow:hidden}
+.pf{height:100%;border-radius:999px;transition:width .5s ease}
+
+/* app nav */
+.anav{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:22px 40px;max-width:980px;margin:0 auto}
+.npill{display:flex;gap:4px;padding:6px;background:rgba(15,23,42,0.85);border:1px solid rgba(255,255,255,0.08);border-radius:999px;backdrop-filter:blur(12px)}
+.npill button{padding:8px 22px;border-radius:999px;border:none;background:transparent;color:#64748b;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;font-family:inherit}
+.npill button:hover{color:#f1f5f9}
+.npill button.act{background:#2563eb;color:#fff;box-shadow:0 3px 14px rgba(37,99,235,0.45)}
+.phdr{max-width:980px;margin:0 auto;padding:8px 40px 28px}
+.ptitle{font-family:'Syne',sans-serif;font-weight:800;font-size:2.2rem;letter-spacing:-.03em}
+.psub{font-size:13px;font-weight:600;color:#475569;margin-top:4px}
+
+/* dashboard */
+.mc{max-width:980px;margin:0 auto;padding:0 40px 80px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.gcard{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:28px;transition:transform .22s,border-color .22s,box-shadow .22s}
+.gcard:hover{transform:translateY(-3px);border-color:rgba(255,255,255,0.12);box-shadow:0 14px 44px rgba(0,0,0,0.35)}
+.gct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.gname{font-weight:700;font-size:16px;line-height:1.3;margin-bottom:6px}
+.gact{display:flex;gap:6px;align-items:center}
+.gdel, .gedit{background:none;border:none;color:#475569;font-size:18px;cursor:pointer;line-height:1;transition:color .2s;padding:0 4px}
+.gdel:hover{color:#f87171}
+.gedit:hover{color:#60a5fa}
+
+.tag{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.15em;padding:3px 9px;border-radius:999px}
+.ts{background:rgba(59,130,246,0.15);color:#93c5fd;border:1px solid rgba(59,130,246,0.22)}
+.tw{background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.22)}
+.ta{background:rgba(168,85,247,0.15);color:#d8b4fe;border:1px solid rgba(168,85,247,0.22)}
+.to{background:rgba(100,116,139,0.18);color:#cbd5e1;border:1px solid rgba(100,116,139,0.22)}
+
+.plbl{display:flex;justify-content:space-between;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+.pleft{color:#334155}.pright{color:#64748b}.pdone{color:var(--green)}
+
+.bunit{width:100%;padding:13px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:16px;color:#f1f5f9;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;transition:all .2s;margin-top:18px;font-family:inherit}
+.bunit:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.16)}
+.bunit:active{transform:scale(0.97)}
+.bdone{width:100%;padding:13px;background:rgba(6,78,59,0.18);border:1px solid rgba(6,95,70,0.28);border-radius:16px;color:var(--green);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.1em;cursor:not-allowed;margin-top:18px;font-family:inherit;animation:popIt .4s ease}
+
+.addcard{background:linear-gradient(135deg,rgba(29,78,216,0.1),rgba(59,130,246,0.05));border:2px dashed rgba(59,130,246,0.38);border-radius:24px;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:all .28s ease}
+.addcard:hover{background:linear-gradient(135deg,rgba(29,78,216,0.2),rgba(59,130,246,0.12));border-color:rgba(96,165,250,0.65);transform:translateY(-3px);box-shadow:0 0 36px rgba(59,130,246,0.18)}
+.aci{font-size:38px;color:#60a5fa;line-height:1}
+.acl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#60a5fa}
+
+.es{display:flex;flex-direction:column;align-items:center;text-align:center;padding:80px 24px}
+.es-e{font-size:56px;margin-bottom:20px}
+.es h3{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:10px}
+.es p{color:#475569;font-size:15px;max-width:280px;line-height:1.6;margin-bottom:36px}
+.bempty{padding:22px 56px;font-size:18px;border-radius:20px;box-shadow:0 0 55px rgba(59,130,246,0.42)}
+
+/* planner sliders */
+.srow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.stcard{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:32px 24px;text-align:center;transition:transform .2s,border-color .2s}
+.stcard:hover{transform:translateY(-3px);border-color:rgba(59,130,246,0.28)}
+.stval{font-family:'Syne',sans-serif;font-size:3.2rem;font-weight:800;letter-spacing:-.05em;margin-bottom:6px}
+.stlbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.18em;color:#334155}
+.bkdn{padding:24px 28px; margin-bottom:24px}
+.bkdn-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#475569;margin-bottom:20px}
+.bkdn-r{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.bkdn-r:last-child{border-bottom:none}
+.bkdn-b{flex-shrink:0;width:7px;height:38px;border-radius:999px}
+.bkdn-i{flex:1;min-width:0}
+.bkdn-n{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bkdn-p{height:5px;border-radius:999px;margin-top:8px}
+.bkdn-m{text-align:right;flex-shrink:0}
+.bkdn-h{font-weight:800;font-size:13px}
+.bkdn-l{font-size:11px;color:#334155;font-weight:600;margin-top:2px}
+
+.slider-cont{margin-bottom:20px}
+.slider-cont:last-child{margin-bottom:0}
+.slider-lbl{display:flex;justify-content:space-between;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px}
+.slider-val{color:#f1f5f9}
+.range-slider{-webkit-appearance:none;width:100%;height:6px;background:rgba(255,255,255,0.08);border-radius:999px;outline:none;transition:background .2s}
+.range-slider:hover{background:rgba(255,255,255,0.12)}
+.range-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--blue);cursor:pointer;transition:transform .2s;box-shadow:0 0 10px rgba(59,130,246,0.4)}
+.range-slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
+
+/* modal */
+.mover{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.88);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px}
+.mbox{width:100%;max-width:440px;padding:36px;border-radius:28px;box-shadow:0 30px 80px rgba(0,0,0,0.7)}
+.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.mtitle{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800}
+.mclose{background:none;border:none;color:#475569;font-size:26px;cursor:pointer;line-height:1;transition:color .2s}
+.mclose:hover{color:#f1f5f9}
+.mfield{margin-bottom:18px}
+.mfield label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#64748b;margin-bottom:8px}
+
+.mfield input, .mfield select, .mfrow input {
+  width:100%; padding:14px 16px; 
+  background:#1e293b; 
+  border:1px solid #334155; 
+  border-radius:14px; 
+  color:#ffffff;
+  font-size:14px; font-family:inherit; outline:none; 
+  transition:border-color .2s,box-shadow .2s;
+}
+.mfield input::placeholder, .mfrow input::placeholder { color:#64748b; }
+.mfield input:focus, .mfield select:focus, .mfrow input:focus {
+  border-color:rgba(59,130,246,0.6); box-shadow:0 0 0 3px rgba(59,130,246,0.15);
+}
+.mfield select option{background:#1e293b}
+.mfrow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.mfrow label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#64748b;margin-bottom:8px}
+.mact{display:flex;gap:12px;padding-top:8px}
+.mcancel{flex:1;padding:16px;border-radius:14px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+.madd{flex:2;padding:16px;border-radius:14px;font-size:14px;font-family:inherit;cursor:pointer}
+
+/* confetti */
+#cc{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+
+@media(max-width:768px){
+  .about-in{grid-template-columns:1fr;gap:40px}
+  .srow{grid-template-columns:1fr}
+  .sec{padding:70px 24px}
+  .lnav{padding:18px 24px}
+  .anav{padding:18px 20px}
+  .mc{padding:0 20px 80px}
+  .phdr{padding:8px 20px 24px}
+  .foot{flex-direction:column;gap:12px;text-align:center;padding:28px 24px}
+  .hcta{padding:16px 32px;font-size:15px}
+  .stat-big{padding:24px}
+  .stat-small{padding:20px}
+}
+@media(max-width:480px){.hide-m{display:none!important}}
+</style>
+</head>
+<body>
+
+<canvas id="cc"></canvas>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+var useState = React.useState;
+
+/* ── Confetti ── */
+function launchConfetti() {
+  var canvas = document.getElementById('cc');
+  var ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  var COLORS = ['#3b82f6','#a78bfa','#34d399','#fbbf24','#f472b6','#60a5fa','#f87171'];
+  var pieces = [];
+  for (var i = 0; i < 80; i++) {
+    pieces.push({
+      x: canvas.width * 0.3 + Math.random() * canvas.width * 0.4,
+      y: canvas.height * 0.5,
+      vx: (Math.random() - 0.5) * 10,
+      vy: Math.random() * -12 - 4,
+      size: Math.random() * 9 + 4,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      round: Math.random() > 0.5,
+      angle: Math.random() * 360,
+      spin: (Math.random() - 0.5) * 10,
+    });
+  }
+  var raf;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var alive = false;
+    for (var i = 0; i < pieces.length; i++) {
+      var p = pieces[i];
+      p.vy += 0.4; p.x += p.vx; p.y += p.vy; p.angle += p.spin;
+      if (p.y < canvas.height + 20) {
+        alive = true;
+        var al = Math.max(0, 1 - (p.y / (canvas.height * 0.9)));
+        ctx.save();
+        ctx.globalAlpha = al;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        if (p.round) { ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+        else { ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2); }
+        ctx.restore();
+      }
+    }
+    if (alive) { raf = requestAnimationFrame(draw); }
+    else { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  }
+  if (raf) cancelAnimationFrame(raf);
+  draw();
+}
+
+/* ── Category config ── */
+var CAT = {
+  'Study':      { cls:'tag ts', color:'#3b82f6' },
+  'Web Series': { cls:'tag tw', color:'#ef4444' },
+  'Anime':      { cls:'tag ta', color:'#a855f7' },
+  'Other':      { cls:'tag to', color:'#64748b' },
+};
+
+/* ════════════════════════════
+   MODAL
+════════════════════════════ */
+function Modal(props) {
+  var onClose = props.onClose;
+  var onSave  = props.onSave;
+  var initialData = props.initialData;
+  
+  var fs = useState({
+    title: initialData ? initialData.title : '',
+    total: initialData ? initialData.total : '',
+    duration: initialData ? initialData.duration : '',
+    durationType: initialData ? initialData.durationType : 'hours',
+    category: initialData ? initialData.category : 'Study'
+  });
+  var f = fs[0]; var setF = fs[1];
+
+  function sf(k,v){ setF(function(p){ var n=Object.assign({},p); n[k]=v; return n; }); }
+  
+  function submit(e) {
+    e.preventDefault();
+    var meta = CAT[f.category] || CAT['Other'];
+    
+    var durationFloat = parseFloat(f.duration);
+    var derivedHours = f.durationType === 'minutes' ? durationFloat / 60 : durationFloat;
+
+    var payload = {
+      id: initialData ? initialData.id : Date.now(),
+      title: f.title,
+      total: parseInt(f.total, 10),
+      current: initialData ? initialData.current : 0,
+      duration: durationFloat,
+      durationType: f.durationType,
+      hours: derivedHours,
+      category: f.category,
+      color: meta.color
+    };
+    
+    onSave(payload);
+    onClose();
+  }
+  
+  var isEdit = !!initialData;
+
+  return (
+    <div className="mover">
+      <div className="glass mbox fu">
+        <div className="mhdr">
+          <span className="mtitle">{isEdit ? 'Edit Goal' : 'New Goal'}</span>
+          <button className="mclose" onClick={onClose}>&#215;</button>
+        </div>
+        <form onSubmit={submit}>
+          <div className="mfield">
+            <label>Goal Name</label>
+            <input required type="text" placeholder="e.g. Organic Chem or Naruto" value={f.title} onChange={function(e){sf('title',e.target.value)}} />
+          </div>
+          <div className="mfrow">
+            <div>
+              <label>Total Units</label>
+              <input required type="number" min={isEdit ? Math.max(1, initialData.current) : "1"} placeholder="10" value={f.total} onChange={function(e){sf('total',e.target.value)}} />
+            </div>
+            <div>
+              <label>Time / Unit</label>
+              <div style={{display:'flex', gap:'8px'}}>
+                <input required type="number" step="0.1" min="0.1" placeholder="1.5" style={{flex:1}} value={f.duration} onChange={function(e){sf('duration',e.target.value)}} />
+                <select value={f.durationType} onChange={function(e){sf('durationType',e.target.value)}} style={{width:'80px', padding:'14px 8px'}}>
+                  <option value="hours">Hrs</option>
+                  <option value="minutes">Mins</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="mfield">
+            <label>Category</label>
+            <select value={f.category} onChange={function(e){sf('category',e.target.value)}}>
+              <option value="Study">Study</option>
+              <option value="Web Series">Web Series</option>
+              <option value="Anime">Anime</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="mact">
+            <button type="button" className="mcancel bg" onClick={onClose}>Cancel</button>
+            <button type="submit" className="madd bp">{isEdit ? 'Save Changes' : 'Add Goal'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════
+   LANDING PAGE
+════════════════════════════ */
+function LandingPage(props) {
+  var onEnter = props.onEnter;
+  function goTo(id){ var el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth'}); }
+
+  var whyCards = [
+    {icon:'🧩',title:'Unit-Based Thinking',   body:'Breaking goals into discrete units makes the abstract concrete. You cannot just "do chemistry" — but you can finish one chapter.'},
+    {icon:'⏱',title:'Honest Time Estimation', body:'Every unit carries a time cost. Doneify adds them up and tells you exactly how many days it takes at your pace. No sugar-coating.'},
+    {icon:'🎯',title:'One Backlog, Everything',body:'Study goals sit next to your shows and anime. Your brain context-switches naturally. Tracking it all keeps you balanced.'},
+    {icon:'📊',title:'Progress You Can See',   body:'Visual progress bars activate your brain\'s completion drive. Seeing 60% done is far more motivating than vaguely remembering you started.'},
+    {icon:'🔥',title:'No Daily Pressure',      body:'No streak to protect. No daily target to hit. Just a clear picture of how much is left. Come back when you\'re ready — your data stays.'},
+    {icon:'⚡',title:'Instant Gratification',  body:'Every time you hit Finish 1 Unit, there is a tiny win. That dopamine hit is real — and confetti doesn\'t hurt either.'},
+  ];
+
+  return (
+    <div className="gbg">
+      <div className="orb orb-t"></div>
+      <div className="orb orb-c"></div>
+
+      <nav className="lnav">
+        <button className="logo" onClick={onEnter}>
+          <div className="logo-ico">D</div>
+          <span className="logo-txt">DONEIFY</span>
+        </button>
+        <div className="lnav-links">
+          <button className="nl hide-m" onClick={function(){goTo('why')}}>Why It Works</button>
+          <button className="nl hide-m" onClick={function(){goTo('about')}}>About</button>
+          <button className="bp" style={{padding:'10px 22px',fontSize:'13px',marginLeft:'8px'}} onClick={onEnter}>Goalboard</button>
+        </div>
+      </nav>
+
+      <div id="hero" className="hero">
+        <div className="badge fu">&#9889; Built for Grinders</div>
+        <h1 className="htitle fu d1">
+          Finish what you<br/>
+          <span className="grad">actually started.</span>
+        </h1>
+        <p className="hsub fu d2">
+          Track your study chapters, anime, and everything in between — one brutal, no-fluff dashboard.
+        </p>
+        <button className="bp hcta fu d3" onClick={onEnter}>Enter Goalboard</button>
+
+        <div className="pills fu d4">
+          {['Study Tracker','Web Series','Anime','Completion Planner','Hours Estimator'].map(function(p){
+            return <span key={p} className="glass-light pill">{p}</span>;
+          })}
+        </div>
+
+        <div className="glass pcard fu d5">
+          <div className="pcard-h">
+            <span className="pcard-t">Physics: Electrostatics</span>
+            <span className="tag ts">Study</span>
+          </div>
+          <div style={{display:'flex',justifyContent:'space-between',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.12em',color:'#334155',marginBottom:'8px'}}>
+            <span>Progress</span><span>4 / 15</span>
+          </div>
+          <div className="pt" style={{height:'9px'}}>
+            <div className="pf" style={{width:'26.6%',background:'linear-gradient(90deg,#1d4ed8,#60a5fa)',boxShadow:'0 0 10px rgba(59,130,246,0.45)'}}></div>
+          </div>
+          <div className="pcard-f">11 units remaining &middot; ~16.5 hrs left</div>
+        </div>
+      </div>
+
+      <div id="why" className="sdiv">
+        <div className="sec">
+          <div className="slabel">The Method</div>
+          <h2 className="stitle">Why it actually<br/><span className="grad">works.</span></h2>
+          <p className="ssub">Most productivity tools guilt-trip you. Doneify just shows you the gap between where you are and where you need to be.</p>
+          <div className="why-grid">
+            {whyCards.map(function(c){
+              return (
+                <div key={c.title} className="wcard">
+                  <span className="wicon">{c.icon}</span>
+                  <div className="wtitle">{c.title}</div>
+                  <div className="wbody">{c.body}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div id="about" className="sdiv">
+        <div className="sec">
+          <div className="slabel">The Developer</div>
+          <div className="about-in">
+            <div>
+              <img src="image.png" alt="Luvya savaria" className="dav-img" />
+              <div className="dname">Luvya savaria</div>
+              <div className="drole">Student &middot; Builder &middot; Grinder</div>
+              <p className="dbio">
+                Grinding through backlogs is exhausting. I built Goalboard because I needed a way to honestly track my own study chapters and anime without the guilt-tripping of standard productivity apps. It takes a massive amount of effort to cover a backlog, but breaking it down unit by unit makes it possible. I'm here to help you—and myself—finally finish what we started.
+              </p>
+              <div style={{display:'flex', flexDirection:'column', alignItems:'flex-start', gap:'16px'}}>
+                <a href="https://www.instagram.com/luvya.html_/" target="_blank" className="bp feedback-btn">
+                  Have a feedback? Send it to me 🚀
+                </a>
+                <div className="idea-pill" style={{margin:0}}>Idea by Nitish Pandey 😎</div>
+              </div>
+            </div>
+            <div className="acol">
+              <div className="ascard stat-big">
+                <span className="asico">🎓</span>
+                <div>
+                  <div className="asval">Student-first</div>
+                  <div className="aslbl">Built by a student, for students</div>
+                </div>
+              </div>
+              <div className="ascard stat-small">
+                <span className="asico">🚀</span>
+                <div>
+                  <div className="asval">v1.0</div>
+                  <div className="aslbl">More features coming soon</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="sdiv">
+        <div className="foot">
+          <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+            <div className="logo-ico" style={{width:'28px',height:'28px',fontSize:'13px',borderRadius:'8px'}}>D</div>
+            <span>DONEIFY</span>
+          </div>
+          <span>Built with too much chai.</span>
+          <span>&#169; 2026 Luvya savaria</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════
+   DASHBOARD
+════════════════════════════ */
+function Dashboard(props) {
+  var goals = props.goals;
+  var setGoals = props.setGoals;
+  var onOpenNew = props.onOpenNew;
+  var onOpenEdit = props.onOpenEdit;
+
+  function complete(id) {
+    setGoals(goals.map(function(x){ return x.id===id ? Object.assign({},x,{current:Math.min(x.total,x.current+1)}) : x; }));
+    launchConfetti();
+  }
+  function remove(id){ setGoals(goals.filter(function(x){ return x.id!==id; })); }
+
+  if (goals.length === 0) {
+    return (
+      <div className="es pi">
+        <div className="es-e">&#127919;</div>
+        <h3>Nothing here yet</h3>
+        <p>Add your first goal — a chapter, an episode, anything to track.</p>
+        <button className="bp bempty" onClick={onOpenNew}>+ Add First Goal</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pi">
+      <div className="cgrid">
+        {goals.map(function(g){
+          var pct  = Math.round((g.current/g.total)*100);
+          var rem  = g.total - g.current;
+          var done = g.current >= g.total;
+          var meta = CAT[g.category] || CAT['Other'];
+          return (
+            <div key={g.id} className="gcard">
+              <div className="gct">
+                <div>
+                  <div className="gname">{g.title}</div>
+                  <span className={meta.cls}>{g.category}</span>
+                </div>
+                <div className="gact">
+                  <button className="gedit" onClick={function(){ onOpenEdit(g); }}>✎</button>
+                  <button className="gdel" onClick={function(){ remove(g.id); }}>&#215;</button>
+                </div>
+              </div>
+              <div className="plbl">
+                <span className="pleft">Progress</span>
+                <span className={done?'pdone':'pright'}>{g.current}/{g.total} &middot; {pct}%</span>
+              </div>
+              <div className="pt" style={{height:'9px'}}>
+                <div className="pf" style={{width:pct+'%',backgroundColor:g.color,boxShadow:'0 0 10px '+g.color+'55'}}></div>
+              </div>
+              {done
+                ? <button className="bdone">&#10003; Completed!</button>
+                : <button className="bunit" onClick={function(){ complete(g.id); }}>Finish 1 Unit ({rem} left)</button>
+              }
+            </div>
+          );
+        })}
+        <button className="addcard" onClick={onOpenNew}>
+          <span className="aci">+</span>
+          <span className="acl">Add New Goal</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════
+   PLANNER
+════════════════════════════ */
+function Planner(props) {
+  var goals = props.goals;
+  var allocs = props.allocs;
+  var setAllocs = props.setAllocs;
+
+  function formatTime(h) {
+    if(h === 0) return '0m';
+    var hrs = Math.floor(h);
+    var mins = Math.round((h - hrs) * 60);
+    var res = [];
+    if(hrs > 0) res.push(hrs + 'h');
+    if(mins > 0) res.push(mins + 'm');
+    return res.join(' ');
+  }
+
+  var catHoursLeft = { 'Study': 0, 'Web Series': 0, 'Anime': 0, 'Other': 0 };
+  var totalHoursLeft = 0;
+  
+  goals.forEach(function(g) {
+    var rem = g.total - g.current;
+    if (rem > 0) {
+      var h = rem * (g.hours || 0);
+      catHoursLeft[g.category] = (catHoursLeft[g.category] || 0) + h;
+      totalHoursLeft += h;
+    }
+  });
+
+  var daysPerCat = [];
+  ['Study', 'Web Series', 'Anime', 'Other'].forEach(function(cat) {
+    if (catHoursLeft[cat] > 0) {
+      if (allocs[cat] > 0) {
+        daysPerCat.push(catHoursLeft[cat] / allocs[cat]);
+      } else {
+        daysPerCat.push(Infinity);
+      }
+    }
+  });
+
+  var maxDays = daysPerCat.length > 0 ? Math.max.apply(null, daysPerCat) : 0;
+  var displayDays = maxDays === Infinity ? '∞' : Math.ceil(maxDays);
+
+  var tot = goals.reduce(function(a,g){ return a+g.total; },0);
+  var dn  = goals.reduce(function(a,g){ return a+g.current; },0);
+  var pct = tot > 0 ? Math.round((dn/tot)*100) : 0;
+  
+  var completedGoalsCount = goals.filter(function(g){ return g.current >= g.total; }).length;
+
+  var stats = [
+    {v:displayDays,            label:'Max Days to Finish', color:'#3b82f6'},
+    {v:totalHoursLeft.toFixed(1),label:'Total Hrs Remaining',color:'#10b981'},
+    {v:pct+'%',                label:'Overall Done',       color:'#a855f7'},
+  ];
+
+  return (
+    <div className="pi">
+      <div className="srow">
+        {stats.map(function(s){
+          return (
+            <div key={s.label} className="stcard">
+              <div className="stval" style={{color:s.color,textShadow:'0 0 28px '+s.color+'44'}}>{s.v}</div>
+              <div className="stlbl">{s.label}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="glass bkdn">
+        <div className="bkdn-t">Daily Time Allocation</div>
+        {['Study', 'Web Series', 'Anime', 'Other'].map(function(cat) {
+          var meta = CAT[cat];
+          return (
+            <div key={cat} className="slider-cont">
+              <div className="slider-lbl">
+                <span style={{color: meta.color}}>{cat}</span>
+                <span className="slider-val">{formatTime(allocs[cat])} / day</span>
+              </div>
+              <input 
+                type="range" 
+                className="range-slider" 
+                min="0" max="12" step="0.5" 
+                value={allocs[cat]} 
+                onChange={function(e) { 
+                  setAllocs(Object.assign({}, allocs, { [cat]: parseFloat(e.target.value) })); 
+                }} 
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="glass bkdn" style={{marginBottom: '24px'}}>
+        <div className="bkdn-t">Goal Breakdown</div>
+        {goals.length===0
+          ? <p style={{color:'#334155',textAlign:'center',padding:'28px 0',fontSize:'14px'}}>No goals yet.</p>
+          : goals.map(function(g,i){
+              var rem  = g.total-g.current;
+              var hrs  = (rem*(g.hours||0)).toFixed(1);
+              var p    = Math.round((g.current/g.total)*100);
+              var meta = CAT[g.category]||CAT['Other'];
+              var isLast = i===goals.length-1;
+              return (
+                <div key={g.id} className="bkdn-r" style={isLast?{borderBottom:'none'}:{}}>
+                  <div className="bkdn-b" style={{background:g.color,boxShadow:'0 0 8px '+g.color+'55'}}></div>
+                  <div className="bkdn-i">
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px'}}>
+                      <span className="bkdn-n">{g.title}</span>
+                      <span className={meta.cls}>{g.category}</span>
+                    </div>
+                    <div className="pt bkdn-p" style={{background:'rgba(255,255,255,0.04)'}}>
+                      <div style={{width:p+'%',height:'100%',backgroundColor:g.color,borderRadius:'999px'}}></div>
+                    </div>
+                  </div>
+                  <div className="bkdn-m">
+                    <div className="bkdn-h">{hrs}h</div>
+                    <div className="bkdn-l">{rem} left</div>
+                  </div>
+                </div>
+              );
+            })
+        }
+      </div>
+
+      <div className="glass bkdn" style={{textAlign:'center', padding: '24px'}}>
+        <div style={{fontSize: '32px', marginBottom: '12px'}}>🏆</div>
+        <div style={{fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.4rem', color: '#f1f5f9'}}>{completedGoalsCount} Projects / Goals Done</div>
+        <div style={{fontSize: '13px', color: '#64748b', marginTop: '6px', fontWeight: 600}}>Keep the momentum going!</div>
+      </div>
+
+    </div>
+  );
+}
+
+/* ════════════════════════════
+   APP SHELL
+════════════════════════════ */
+function AppShell(props) {
+  var goals    = props.goals;
+  var setGoals = props.setGoals;
+  var allocs   = props.allocs;
+  var setAllocs = props.setAllocs;
+  var onHome   = props.onHome;
+  
+  var vs = useState('dashboard'); var view=vs[0]; var setView=vs[1];
+  var ms = useState(false);       var modalOpen=ms[0]; var setModalOpen=ms[1];
+  var es = useState(null);        var editData=es[0];  var setEditData=es[1];
+
+  function handleSaveGoal(payload) {
+    if (editData) {
+      setGoals(goals.map(function(g) { return g.id === payload.id ? payload : g; }));
+    } else {
+      setGoals(function(p){ return p.concat([payload]); });
+    }
+  }
+
+  function openNewModal() {
+    setEditData(null);
+    setModalOpen(true);
+  }
+
+  function openEditModal(goalToEdit) {
+    setEditData(goalToEdit);
+    setModalOpen(true);
+  }
+
+  var active = goals.filter(function(g){ return g.current<g.total; }).length;
+
+  return (
+    <div className="gbg" style={{minHeight:'100vh'}}>
+      <div className="orb orb-t"></div>
+
+      <nav className="anav">
+        <button className="logo" onClick={onHome}>
+          <div className="logo-ico">D</div>
+          <span className="logo-txt">DONEIFY</span>
+        </button>
+        <div className="npill">
+          <button className={view==='dashboard'?'act':''} onClick={function(){setView('dashboard')}}>Backlog</button>
+          <button className={view==='planner'?'act':''}   onClick={function(){setView('planner')}}>Planner</button>
+        </div>
+        <button className="bp" style={{padding:'10px 22px',fontSize:'13px'}} onClick={openNewModal}>
+          + New Goal
+        </button>
+      </nav>
+
+      <div className="phdr">
+        <div className="ptitle">{view==='dashboard'?'Your Backlog':'The Planner'}</div>
+        <div className="psub">{view==='dashboard'?(active+' active goal'+(active!==1?'s':'')):'Estimated finish timeline'}</div>
+      </div>
+
+      <div className="mc">
+        {view==='dashboard'
+          ? <Dashboard goals={goals} setGoals={setGoals} onOpenNew={openNewModal} onOpenEdit={openEditModal} />
+          : <Planner goals={goals} allocs={allocs} setAllocs={setAllocs} />
+        }
+      </div>
+
+      {modalOpen && <Modal onClose={function(){setModalOpen(false)}} onSave={handleSaveGoal} initialData={editData} />}
+    </div>
+  );
+}
+
+/* ════════════════════════════
+   ROOT
+════════════════════════════ */
+function App() {
+  var ps = useState('landing'); var page=ps[0]; var setPage=ps[1];
+  
+  var gs = useState(function() {
+    var saved = localStorage.getItem('doneify_goals');
+    if (saved) { try { return JSON.parse(saved); } catch(e) {} }
+    return [
+      {id:1,title:'Physics: Electrostatics',total:15,current:4,duration:1.5,durationType:'hours',hours:1.5,category:'Study',color:'#3b82f6'},
+      {id:2,title:'Stranger Things S5',     total:8, current:2,duration:60, durationType:'minutes',hours:1.0,category:'Web Series',color:'#ef4444'},
+    ];
+  });
+  var goals=gs[0]; var setGoals=gs[1];
+
+  var as = useState(function() {
+    var saved = localStorage.getItem('doneify_allocs');
+    if (saved) { try { return JSON.parse(saved); } catch(e) {} }
+    return { 'Study': 2.5, 'Web Series': 1.0, 'Anime': 1.0, 'Other': 0.5 };
+  });
+  var allocs = as[0]; var setAllocs = as[1];
+
+  React.useEffect(function() { localStorage.setItem('doneify_goals', JSON.stringify(goals)); }, [goals]);
+  React.useEffect(function() { localStorage.setItem('doneify_allocs', JSON.stringify(allocs)); }, [allocs]);
+
+  if (page==='landing') return <LandingPage onEnter={function(){setPage('app')}} />;
+  return <AppShell goals={goals} setGoals={setGoals} allocs={allocs} setAllocs={setAllocs} onHome={function(){setPage('landing')}} />;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+</body>
+</html>
